@@ -20,20 +20,20 @@ class CarController extends Controller
         return Cars::create($request->all());
     }
 
-    public function show(Cars $Cars)
+    public function show(Cars $Car)
     {
-        return $Cars;
+        return $Car;
     }
 
-    public function update(Request $request, Cars $Cars)
+    public function update(Request $request, Cars $Car)
     {
-        $Cars->update($request->all());
-        return $Cars;
+        $Car->update($request->all());
+        return $Car;
     }
 
-    public function destroy(Cars $Cars)
+    public function destroy(Cars $Car)
     {
-        $Cars->delete();
+        $Car->delete();
         return response()->noContent();
     }
 }
