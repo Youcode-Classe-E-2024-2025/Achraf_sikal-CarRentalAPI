@@ -17,7 +17,26 @@ class CarController extends Controller
 
     public function store(Request $request)
     {
-        return Cars::create($request->all());
+        $validatedData = $request->validate([
+            'make' => 'required|string|max:255',
+            'model' => 'required|string|max:255',
+            'year' => 'required|integer|digits:4|before_or_equal:' . date('Y'),
+            'color' => 'required|string|max:50',
+            'registration_number' => 'required|string|unique:cars,registration_number|max:255',
+            'price_per_day' => 'required|numeric|min:0.01',
+            'available' => 'nullable|boolean',
+        ]);
+
+        $car = Cars::create([
+            'make' => $validatedData['make'],
+            'model' => $validatedData['model'],
+            'year' => $validatedData['year'],
+            'color' => $validatedData['color'],
+            'registration_number' => $validatedData['registration_number'],
+            'price_per_day' => $validatedData['price_per_day'],
+            'available' => $validatedData['available'] ?? true,
+        ]);
+        return $car;
     }
 
     public function show(Cars $Car)
