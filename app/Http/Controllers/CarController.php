@@ -6,6 +6,36 @@ use App\Models\Cars;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+/**
+ * @OA\Get(
+ *     path="/api/cars/{id}",
+ *     summary="Retrieve car details",
+ *     tags={"Cars"},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         description="ID of the car to retrieve",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Car retrieved successfully",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="status", type="boolean", example=true),
+ *             @OA\Property(property="message", type="string", example="Car retrieved successfully"),
+ *             @OA\Property(property="car", type="object",
+ *                 @OA\Property(property="id", type="integer", example=1),
+ *                 @OA\Property(property="make", type="string", example="Toyota"),
+ *                 @OA\Property(property="model", type="string", example="Corolla"),
+ *                 @OA\Property(property="year", type="integer", example=2020)
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(response=404, description="Car not found")
+ * )
+ */
 
 class CarController extends Controller
 {
