@@ -6,47 +6,85 @@ use App\Models\Cars;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-/**
- * @OA\Get(
- *     path="/api/cars/{id}",
- *     summary="Retrieve car details",
- *     tags={"Cars"},
- *     @OA\Parameter(
- *         name="id",
- *         in="path",
- *         description="ID of the car to retrieve",
- *         required=true,
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Car retrieved successfully",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(property="status", type="boolean", example=true),
- *             @OA\Property(property="message", type="string", example="Car retrieved successfully"),
- *             @OA\Property(property="car", type="object",
- *                 @OA\Property(property="id", type="integer", example=1),
- *                 @OA\Property(property="make", type="string", example="Toyota"),
- *                 @OA\Property(property="model", type="string", example="Corolla"),
- *                 @OA\Property(property="year", type="integer", example=2020)
- *             )
- *         )
- *     ),
- *     @OA\Response(response=404, description="Car not found")
- * )
- */
-
 class CarController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/api/cars",
+     *     summary="Retrieve a list of all cars",
+     *     tags={"Cars"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of all cars retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Cars retrieved successfully"),
+     *             @OA\Property(property="car", type="array", @OA\Items(
+     *                 ref="#/components/schemas/Car"
+     *             ))
+     *         )
+     *     ),
+     *     @OA\Response(response=500, description="Server error"),
+     * )
      */
     public function index()
     {
-        return Cars::all();
+        $cars = Cars::all();
+        return response()->json([
+            'status' => true,
+            'message' => 'Car Created Successfully',
+            'cars' => $cars
+        ], 200);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/cars",
+     *     summary="Create a new car",
+     *     tags={"Cars"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Car data",
+     *         @OA\JsonContent(
+     *             required={"make", "model", "year", "color", "registration_number", "price_per_day"},
+     *             @OA\Property(property="make", type="string", example="Toyota"),
+     *             @OA\Property(property="model", type="string", example="Camry"),
+     *             @OA\Property(property="year", type="integer", example=2020),
+     *             @OA\Property(property="color", type="string", example="Red"),
+     *             @OA\Property(property="registration_number", type="string", example="ABC1234"),
+     *             @OA\Property(property="price_per_day", type="number", format="float", example=50.0),
+     *             @OA\Property(property="available", type="boolean", example=true)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Car created successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Car Created Successfully"),
+     *             @OA\Property(property="car", ref="#/components/schemas/Car")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Validation error"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Server error")
+     *         )
+     *     )
+     * )
+     */
     public function store(Request $request)
     {
         try {
@@ -92,6 +130,36 @@ class CarController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/cars/{id}",
+     *     summary="Retrieve car details",
+     *     tags={"Cars"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of the car to retrieve",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Car retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Car retrieved successfully"),
+     *             @OA\Property(property="car", type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="make", type="string", example="Toyota"),
+     *                 @OA\Property(property="model", type="string", example="Corolla"),
+     *                 @OA\Property(property="year", type="integer", example=2020)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Car not found")
+     * )
+     */
     public function show(Cars $Car)
     {
         try {
