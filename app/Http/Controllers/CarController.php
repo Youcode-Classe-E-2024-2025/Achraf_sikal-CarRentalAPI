@@ -11,21 +11,45 @@ class CarController extends Controller
     /**
      * @OA\Get(
      *     path="/api/cars",
-     *     summary="Retrieve a list of all cars",
+     *     summary="Get paginated list of cars",
      *     tags={"Cars"},
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Page number to retrieve",
+     *         required=false,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="List of all cars retrieved successfully",
+     *         description="Paginated cars list",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Cars retrieved successfully"),
-     *             @OA\Property(property="car", type="array", @OA\Items(
-     *                 ref="#/components/schemas/Car"
-     *             ))
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="make", type="string", example="Toyota"),
+     *                     @OA\Property(property="model", type="string", example="Corolla"),
+     *                     @OA\Property(property="year", type="integer", example=2020),
+     *                     @OA\Property(property="color", type="string", example="Red"),
+     *                     @OA\Property(property="registration_number", type="string", example="ABC1234"),
+     *                     @OA\Property(property="price_per_day", type="number", format="float", example=50.0),
+     *                     @OA\Property(property="available", type="boolean", example=true)
+     *                 )
+     *             ),
+     *             @OA\Property(property="current_page", type="integer", example=1),
+     *             @OA\Property(property="total_pages", type="integer", example=5),
+     *             @OA\Property(property="total_items", type="integer", example=15),
+     *             @OA\Property(property="per_page", type="integer", example=3)
      *         )
      *     ),
-     *     @OA\Response(response=500, description="Server error"),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Internal Server Error")
+     *         )
+     *     )
      * )
      */
     public function index()

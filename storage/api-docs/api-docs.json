@@ -11,28 +11,83 @@
                 "tags": [
                     "Cars"
                 ],
-                "summary": "Retrieve a list of all cars",
+                "summary": "Get paginated list of cars",
                 "operationId": "1fd4f1fdc0da258c5084bcdce4bbe693",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number to retrieve",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "List of all cars retrieved successfully",
+                        "description": "Paginated cars list",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Cars retrieved successfully"
-                                        },
-                                        "car": {
+                                        "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/Car"
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "make": {
+                                                        "type": "string",
+                                                        "example": "Toyota"
+                                                    },
+                                                    "model": {
+                                                        "type": "string",
+                                                        "example": "Corolla"
+                                                    },
+                                                    "year": {
+                                                        "type": "integer",
+                                                        "example": 2020
+                                                    },
+                                                    "color": {
+                                                        "type": "string",
+                                                        "example": "Red"
+                                                    },
+                                                    "registration_number": {
+                                                        "type": "string",
+                                                        "example": "ABC1234"
+                                                    },
+                                                    "price_per_day": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 50
+                                                    },
+                                                    "available": {
+                                                        "type": "boolean",
+                                                        "example": true
+                                                    }
+                                                },
+                                                "type": "object"
                                             }
+                                        },
+                                        "current_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "total_pages": {
+                                            "type": "integer",
+                                            "example": 5
+                                        },
+                                        "total_items": {
+                                            "type": "integer",
+                                            "example": 15
+                                        },
+                                        "per_page": {
+                                            "type": "integer",
+                                            "example": 3
                                         }
                                     },
                                     "type": "object"
@@ -41,7 +96,24 @@
                         }
                     },
                     "500": {
-                        "description": "Server error"
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Internal Server Error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             },
