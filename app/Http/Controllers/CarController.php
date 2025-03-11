@@ -30,11 +30,15 @@ class CarController extends Controller
      */
     public function index()
     {
-        $cars = Cars::all();
+        $perPage = 3;
+        $cars = Cars::paginate($perPage);
+
         return response()->json([
-            'status' => true,
-            'message' => 'Car Created Successfully',
-            'cars' => $cars
+            'data' => $cars->items(),
+            'current_page' => $cars->currentPage(),
+            'total_pages' => $cars->lastPage(),
+            'total_items' => $cars->total(),
+            'per_page' => $cars->perPage(),
         ], 200);
     }
 
