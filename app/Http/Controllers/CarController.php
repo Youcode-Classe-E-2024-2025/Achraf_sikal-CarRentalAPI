@@ -177,15 +177,93 @@ class CarController extends Controller
         }
     }
 
+    /**
+     * @OA\Put(
+     *     path="/api/cars/{id}",
+     *     summary="Update an existing car",
+     *     tags={"Cars"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of the car to update",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Updated car data",
+     *         @OA\JsonContent(
+     *             required={"make", "model", "year", "color", "registration_number", "price_per_day"},
+     *             @OA\Property(property="make", type="string", example="Toyota"),
+     *             @OA\Property(property="model", type="string", example="Corolla"),
+     *             @OA\Property(property="year", type="integer", example=2020),
+     *             @OA\Property(property="color", type="string", example="Red"),
+     *             @OA\Property(property="registration_number", type="string", example="ABC1234"),
+     *             @OA\Property(property="price_per_day", type="number", format="float", example=50.0),
+     *             @OA\Property(property="available", type="boolean", example=true)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Car updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Car updated successfully"),
+     *             @OA\Property(property="car", ref="#/components/schemas/Car")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Car not found"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server error"
+     *     )
+     * )
+     */
     public function update(Request $request, Cars $Car)
     {
         $Car->update($request->all());
-        return $Car;
+        return response()->json([
+            'status' => true,
+            'message' => 'Car updated successfully',
+            'car' => $Car
+        ], 200);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/cars/{id}",
+     *     summary="Delete a car",
+     *     tags={"Cars"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of the car to delete",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Car deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Car not found"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server error"
+     *     )
+     * )
+     */
     public function destroy(Cars $Car)
     {
         $Car->delete();
-        return response()->noContent();
+        return response()->json([
+            'status' => true,
+            'message' => 'Car deleted successfully'
+        ], 204);
     }
 }
