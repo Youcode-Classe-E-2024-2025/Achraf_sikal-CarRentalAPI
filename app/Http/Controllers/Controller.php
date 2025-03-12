@@ -3,12 +3,23 @@
 namespace App\Http\Controllers;
 
 /**
- * @OA\Info(
- *     title="My Laravel API",
- *     version="1.0.0",
- *     description="API documentation for my Laravel project"
+ * @OA\OpenApi(
+ *     @OA\Info(
+ *         title="Car Rental API",
+ *         version="1.0.0",
+ *         description="API for renting and managing cars"
+ *     ),
+ *     @OA\Components(
+ *         @OA\SecurityScheme(
+ *             securityScheme="BearerAuth",
+ *             type="http",
+ *             scheme="bearer"
+ *         )
+ *     )
  * )
  */
+
+
 
 abstract class Controller
 {

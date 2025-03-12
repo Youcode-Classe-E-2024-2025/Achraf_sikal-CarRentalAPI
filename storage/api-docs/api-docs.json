@@ -1,8 +1,8 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "My Laravel API",
-        "description": "API documentation for my Laravel project",
+        "title": "Car Rental API",
+        "description": "API for renting and managing cars",
         "version": "1.0.0"
     },
     "paths": {
@@ -436,6 +436,183 @@
                     }
                 }
             }
+        },
+        "/api/rent": {
+            "post": {
+                "tags": [
+                    "Rentals"
+                ],
+                "summary": "Rent a car",
+                "operationId": "eae8ae4b5f9a38461047bb721789cc1e",
+                "requestBody": {
+                    "description": "Rental request details",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "car_id",
+                                    "start_date",
+                                    "end_date"
+                                ],
+                                "properties": {
+                                    "car_id": {
+                                        "description": "ID of the car to rent",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "start_date": {
+                                        "description": "Rental start date",
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-03-10"
+                                    },
+                                    "end_date": {
+                                        "description": "Rental end date",
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-03-20"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Rental request created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Rental request created"
+                                        },
+                                        "rental": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "user_id": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "car_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "start_date": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2025-03-10"
+                                                },
+                                                "end_date": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2025-03-20"
+                                                },
+                                                "total_price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 500
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "pending"
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "example": "rent"
+                                                },
+                                                "car": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "make": {
+                                                            "type": "string",
+                                                            "example": "Toyota"
+                                                        },
+                                                        "model": {
+                                                            "type": "string",
+                                                            "example": "Camry"
+                                                        },
+                                                        "price_per_day": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 50
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error or car unavailable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "This vehicle is currently rented by another customer."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized. Token is missing or invalid."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Internal Server Error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -486,12 +663,22 @@
                 },
                 "type": "object"
             }
+        },
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer"
+            }
         }
     },
     "tags": [
         {
             "name": "Cars",
             "description": "Cars"
+        },
+        {
+            "name": "Rentals",
+            "description": "Rentals"
         }
     ]
 }
