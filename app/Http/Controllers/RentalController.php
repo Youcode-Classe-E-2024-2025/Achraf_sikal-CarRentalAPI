@@ -94,6 +94,7 @@ class RentalController extends Controller
             'status' => 'pending',
             'type' => 'rent',
         ]);
+        Cars::where('id', $request->car_id)->update(["available"=>false]);
 
         return response()->json([
             'message' => 'Rental request created',
