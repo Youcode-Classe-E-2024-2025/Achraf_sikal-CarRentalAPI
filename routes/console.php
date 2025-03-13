@@ -22,6 +22,5 @@ Schedule::call(function () {
     DB::table('cars')
         ->whereIn('id', function ($query) {
             $query->select('car_id')->from('rentals')->where('status', 'completed');
-        })
-        ->update(['available' => true]);
-})->daily();
+        })->update(['available' => true]);
+})->everySecond();
