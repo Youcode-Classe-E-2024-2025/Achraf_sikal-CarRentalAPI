@@ -70,7 +70,7 @@ class PaymentController extends Controller
                                 'name' => $pay->car->make . ' ' . $pay->car->model,
                                 'description' => "Car rental for " . $pay->car->make . " " . $pay->car->model,
                             ],
-                            'unit_amount' => $pay->total_price * 100, // Stripe expects amount in cents
+                            'unit_amount' => $pay->total_price * 100,
                         ],
                         'quantity' => 1,
                     ],
@@ -92,6 +92,7 @@ class PaymentController extends Controller
             return response()->json([
                 'data' => $pay,
                 'checkout_url' => $session->url,
+                'id' => $session->id,
             ], 200);
 
         } catch (\Exception $e) {
@@ -102,25 +103,80 @@ class PaymentController extends Controller
         }
     }
     /**
-     * @OA\Get(
+     * @OA\Post(
      *     path="/api/success",
-     *     summary="Handle successful Stripe payment",
-     *     tags={"Rentals"},
+     *     summary="Handle successful Stripe payment and store payment record",
+     *     tags={"Payments"},
      *     security={{ "BearerAuth": {} }},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"session_id"},
+     *             @OA\Property(property="session_id", type="string", example="cs_test_12345")
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Payment success message",
+     *         description="Payment was successful and payment record created",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Payment successful! Thank you for renting a car.")
+     *             @OA\Property(property="message", type="string", example="Payment was successful, and payment record created."),
+     *             @OA\Property(property="payment", type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="rental_id", type="integer", example=5),
+     *                 @OA\Property(property="amount", type="number", format="float", example=100.50),
+     *                 @OA\Property(property="payment_method", type="string", example="credit_card"),
+     *                 @OA\Property(property="status", type="string", example="completed")
+     *             )
      *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Payment not successful"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error"
      *     )
      * )
      */
-    public function success()
+    public function success(Request $request)
     {
-        return response()->json([
-            'message' => 'Payment successful! Thank you for renting a car.'
-        ]);
+        $sessionId = $request->get('session_id');
+
+        Stripe::setApiKey(config('stripe.sk'));
+
+        try {
+            $session = Session::retrieve($sessionId);
+
+            if ($session->payment_status == 'paid') {
+
+                $rental = Rental::where('car_id', $session->metadata->car_id)
+                    ->where('user_id', $session->metadata->user_id)
+                    ->firstOrFail();
+
+                $payment = Payment::create([
+                    'rental_id' => $rental->id,
+                    'amount' => $session->amount_total / 100,
+                    'payment_method' => $session->payment_method_types[0],
+                    'status' => 'completed',
+                ]);
+
+                return response()->json([
+                    'message' => 'Payment was successful, and payment record created.',
+                    'payment' => $payment
+                ]);
+            }
+
+            return response()->json([
+                'error' => 'Payment not successful.',
+            ], 400);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'An error occurred during payment processing.',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
     public function store(Request $request)
     {

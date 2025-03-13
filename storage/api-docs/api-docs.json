@@ -498,28 +498,79 @@
             }
         },
         "/api/success": {
-            "get": {
+            "post": {
                 "tags": [
-                    "Rentals"
+                    "Payments"
                 ],
-                "summary": "Handle successful Stripe payment",
-                "operationId": "db150de0ff486becba955d629601597b",
+                "summary": "Handle successful Stripe payment and store payment record",
+                "operationId": "2e1c08b2428c8015c1ae033c2d067d25",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "session_id"
+                                ],
+                                "properties": {
+                                    "session_id": {
+                                        "type": "string",
+                                        "example": "cs_test_12345"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
-                        "description": "Payment success message",
+                        "description": "Payment was successful and payment record created",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Payment successful! Thank you for renting a car."
+                                            "example": "Payment was successful, and payment record created."
+                                        },
+                                        "payment": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "rental_id": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "amount": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 100.5
+                                                },
+                                                "payment_method": {
+                                                    "type": "string",
+                                                    "example": "credit_card"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "completed"
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
                                 }
                             }
                         }
+                    },
+                    "400": {
+                        "description": "Payment not successful"
+                    },
+                    "500": {
+                        "description": "Internal server error"
                     }
                 },
                 "security": [
@@ -771,6 +822,10 @@
         {
             "name": "Rentals",
             "description": "Rentals"
+        },
+        {
+            "name": "Payments",
+            "description": "Payments"
         }
     ]
 }

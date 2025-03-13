@@ -17,6 +17,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('rent', [RentalController::class, 'rentCar']);
     Route::post('checkout', [PaymentController::class, 'checkout']);
     Route::post('index', [PaymentController::class, 'index'])->name('index');
-    Route::get('success', [PaymentController::class, 'checkout'])->name('success');
+    Route::post('success', [PaymentController::class, 'checkout'])->name('success');
     Route::post('pay', [PaymentController::class, 'buyCar']);
 });
