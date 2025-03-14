@@ -18,5 +18,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('checkout', [PaymentController::class, 'checkout']);
     Route::post('index', [PaymentController::class, 'index'])->name('index');
     Route::post('success', [PaymentController::class, 'checkout'])->name('success');
-    Route::post('pay', [PaymentController::class, 'buyCar']);
 });
